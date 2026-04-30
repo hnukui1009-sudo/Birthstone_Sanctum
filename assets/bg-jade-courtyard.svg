@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="night" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#071214"/>
+      <stop offset=".52" stop-color="#11100d"/>
+      <stop offset="1" stop-color="#050403"/>
+    </linearGradient>
+    <radialGradient id="jadeGlow" cx="52%" cy="53%" r="48%">
+      <stop offset="0" stop-color="#72e0b4" stop-opacity=".44"/>
+      <stop offset=".42" stop-color="#1f6b5c" stop-opacity=".18"/>
+      <stop offset="1" stop-color="#03100f" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="water" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#143b3f"/>
+      <stop offset=".52" stop-color="#0e1f24"/>
+      <stop offset="1" stop-color="#050707"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#night)"/>
+  <rect width="1600" height="900" fill="url(#jadeGlow)"/>
+  <path d="M0 578 C280 548 398 597 654 553 C900 510 1038 590 1308 532 C1432 506 1528 502 1600 492 L1600 900 L0 900 Z" fill="#080707"/>
+  <ellipse cx="815" cy="705" rx="540" ry="128" fill="url(#water)" opacity=".84"/>
+  <g fill="none" stroke="#7ae0bd" stroke-opacity=".22" stroke-width="3">
+    <path d="M380 700c125-30 250-30 375 0s250 30 375 0"/>
+    <path d="M450 748c100-20 200-20 300 0s200 20 300 0"/>
+  </g>
+  <g transform="translate(250 210)">
+    <path d="M0 305h1100v52H0z" fill="#17100d"/>
+    <path d="M108 218h884l-68 68H176z" fill="#681a1d"/>
+    <path d="M168 170h764l-50 54H218z" fill="#140b0a"/>
+    <path d="M224 286h74v196h-74zM802 286h74v196h-74z" fill="#3b1114"/>
+    <path d="M356 296h388v158H356z" fill="#0a0908"/>
+    <path d="M390 324h320v94H390z" fill="#173d39" opacity=".62"/>
+    <path d="M410 342h280M410 372h280M410 402h280" stroke="#d9a94f" stroke-opacity=".2" stroke-width="3"/>
+  </g>
+  <g fill="#d9a94f" opacity=".72">
+    <circle cx="348" cy="522" r="18"/>
+    <circle cx="1250" cy="504" r="18"/>
+    <path d="M331 536h34v50h-34zM1233 518h34v50h-34z"/>
+  </g>
+  <g stroke="#d9a94f" stroke-opacity=".16" stroke-width="2" fill="none">
+    <path d="M95 150c90 40 180 40 270 0M1235 170c90 40 180 40 270 0"/>
+    <path d="M160 188h155M1300 208h155"/>
+  </g>
+</svg>

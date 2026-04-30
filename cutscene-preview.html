@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Birthstone Columns Time UP and pixel temple cutscene preview.">
+    <title>Birthstone Columns Cutscene Preview</title>
+    <link rel="preload" href="assets/bg-moon-gate.svg" as="image">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <div class="app-shell stage-moon theme-peak">
+      <div class="scene-backdrop is-visible" style="--scene-art: url('assets/bg-moon-gate.svg')" aria-hidden="true"></div>
+      <div class="resonance-layer" aria-hidden="true"></div>
+
+      <div class="time-up-overlay" id="timeUpOverlay" aria-live="assertive" aria-hidden="true">
+        <span>Time UP!</span>
+      </div>
+
+      <div class="pixel-temple-overlay" id="pixelTempleOverlay" aria-live="polite" aria-hidden="true">
+        <div class="pixel-temple-frame" id="pixelTempleFrame">
+          <canvas id="pixelTempleCanvas" width="160" height="112" aria-hidden="true"></canvas>
+          <div class="pixel-temple-caption">
+            <span id="pixelTempleTitle">Astral Sanctum</span>
+            <strong id="pixelTempleScore">200,000 - The full temple awakens</strong>
+          </div>
+        </div>
+      </div>
+
+      <main class="bgm-preview" aria-labelledby="previewTitle">
+        <section class="bgm-preview-panel">
+          <p class="eyebrow">Cutscene Preview</p>
+          <h1 id="previewTitle">Time UP / Pixel Temple</h1>
+          <p class="mood-line">終了時レイヤー演出だけを単体確認できます。</p>
+
+          <div class="preview-player">
+            <div>
+              <span class="preview-label">Selected</span>
+              <strong id="previewStatus">Ready</strong>
+            </div>
+            <div class="preview-actions">
+              <button class="primary-button" id="timeUpButton" type="button">Time UP</button>
+              <button class="secondary-button" id="templeButton" type="button">Temple</button>
+              <button class="secondary-button" id="sequenceButton" type="button">Sequence</button>
+            </div>
+          </div>
+
+          <nav class="bgm-link-list" aria-label="Cutscene preview links">
+            <a class="bgm-track-link" href="cutscene-preview.html?play=timeup">Time UP</a>
+            <a class="bgm-track-link" href="cutscene-preview.html?play=temple">Temple</a>
+            <a class="bgm-track-link" href="cutscene-preview.html?play=sequence">Sequence</a>
+          </nav>
+
+          <section class="cutscene-score-panel" aria-labelledby="scoreJudgeTitle">
+            <p class="preview-label" id="scoreJudgeTitle">Score Judge</p>
+            <div class="score-judge-control">
+              <input id="scoreInput" type="number" min="0" step="1000" value="200000" aria-label="Final score">
+              <button class="primary-button" id="scoreJudgeButton" type="button">判定して再生</button>
+            </div>
+            <p class="preview-status" id="scoreJudgeText" aria-live="polite">200,000: Astral Sanctum</p>
+          </section>
+
+          <section class="temple-tier-preview" aria-labelledby="templeTierTitle">
+            <p class="preview-label" id="templeTierTitle">Temple Milestones</p>
+            <div class="temple-tier-grid" id="templeTierGrid"></div>
+          </section>
+
+          <a class="back-link" href="index.html">ゲームへ戻る</a>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      (() => {
+        const TIME_UP_HOLD = 3000;
+        const PIXEL_TEMPLE_HOLD = 5000;
+        const PIXEL_TEMPLE_DRAW_UNTIL = 4850;
+        const PIXEL_TEMPLE_FADE_START = 4200;
+        const milestones = [
+          { score: 20000, title: "Gate Opens", subtitle: "Bronze pillars wake", tier: 0 },
+          { score: 50000, title: "Jade Court", subtitle: "The arcade shrine rises", tier: 1 },
+          { score: 85000, title: "Ruby Altar", subtitle: "Columns of light align", tier: 2 },
+          { score: 125000, title: "Moon Vault", subtitle: "The sanctum reveals itself", tier: 3 },
+          { score: 145000, title: "Star Pavilion", subtitle: "Twin halls unfold", tier: 4 },
+          { score: 165000, title: "Dragon Corridor", subtitle: "Outer gates ignite", tier: 5 },
+          { score: 185000, title: "Celestial Spire", subtitle: "The tower pierces night", tier: 6 },
+          { score: 200000, title: "Astral Sanctum", subtitle: "The full temple awakens", tier: 7 }
+        ];
+
+        const qs = (selector) => document.querySelector(selector);
+        const timeUpOverlay = qs("#timeUpOverlay");
+        const timeUpText = qs("#timeUpOverlay span");
+        const templeOverlay = qs("#pixelTempleOverlay");
+        const templeFrame = qs("#pixelTempleFrame");
+        const templeCanvas = qs("#pixelTempleCanvas");
+        const templeTitle = qs("#pixelTempleTitle");
+        const templeScore = qs("#pixelTempleScore");
+        const statusText = qs("#previewStatus");
+        const scoreInput = qs("#scoreInput");
+        const scoreJudgeText = qs("#scoreJudgeText");
+        const templeTierGrid = qs("#templeTierGrid");
+
+        let templeFrameId = 0;
+        let templeTimerId = 0;
+        let timeUpTimerId = 0;
+
+        function formatNumber(value) {
+          return new Intl.NumberFormat("en-US").format(value);
+        }
+
+        function setStatus(text) {
+          statusText.textContent = text;
+        }
+
+        function getMilestoneForScore(score) {
+          let selected = null;
+          milestones.forEach((milestone) => {
+            if (score >= milestone.score) {
+              selected = milestone;
+            }
+          });
+
+          return selected;
+        }
+
+        function setScoreJudge(score, milestone) {
+          const scoreText = formatNumber(score);
+          scoreJudgeText.textContent = milestone
+            ? `${scoreText}: ${milestone.title} / ${milestone.subtitle}`
+            : `${scoreText}: 神殿カットインなし`;
+        }
+
+        function restartAnimation(element) {
+          if (!element) {
+            return;
+          }
+
+          element.style.animation = "none";
+          void element.offsetWidth;
+          element.style.animation = "";
+        }
+
+        function hideTimeUp() {
+          window.clearTimeout(timeUpTimerId);
+          timeUpTimerId = 0;
+          timeUpOverlay.classList.remove("is-visible");
+          timeUpOverlay.setAttribute("aria-hidden", "true");
+        }
+
+        function showTimeUp(onComplete = null) {
+          hideTimeUp();
+          restartAnimation(timeUpText);
+          void timeUpOverlay.offsetWidth;
+          timeUpOverlay.classList.add("is-visible");
+          timeUpOverlay.setAttribute("aria-hidden", "false");
+          setStatus("Time UP");
+
+          timeUpTimerId = window.setTimeout(() => {
+            hideTimeUp();
+            onComplete?.();
+          }, TIME_UP_HOLD);
+        }
+
+        function hideTemple() {
+          window.cancelAnimationFrame(templeFrameId);
+          templeFrameId = 0;
+          window.clearTimeout(templeTimerId);
+          templeTimerId = 0;
+          templeOverlay.classList.remove("is-visible");
+          templeOverlay.setAttribute("aria-hidden", "true");
+        }
+
+        function showTemple(milestone = milestones[3], onComplete = null) {
+          hideTemple();
+          templeTitle.textContent = milestone.title;
+          templeScore.textContent = `${formatNumber(milestone.score)} - ${milestone.subtitle}`;
+          restartAnimation(templeFrame);
+          void templeOverlay.offsetWidth;
+          templeOverlay.classList.add("is-visible");
+          templeOverlay.setAttribute("aria-hidden", "false");
+          setStatus(`Temple: ${milestone.title}`);
+
+          const startedAt = performance.now();
+          const animate = (now) => {
+            const elapsed = now - startedAt;
+            drawPixelTempleScene(milestone, elapsed);
+
+            if (elapsed < PIXEL_TEMPLE_DRAW_UNTIL && templeOverlay.classList.contains("is-visible")) {
+              templeFrameId = window.requestAnimationFrame(animate);
+            }
+          };
+
+          templeFrameId = window.requestAnimationFrame(animate);
+          templeTimerId = window.setTimeout(() => {
+            hideTemple();
+            setStatus("Ready");
+            onComplete?.();
+          }, PIXEL_TEMPLE_HOLD);
+        }
+
+        function playSequence() {
+          showTimeUp(() => window.setTimeout(() => showTemple(milestones[3]), 160));
+        }
+
+        function drawPixelTempleScene(milestone, elapsed = 0, targetCanvas = templeCanvas) {
+          const canvas = targetCanvas;
+          const context = canvas?.getContext("2d");
+          if (!canvas || !context) {
+            return;
+          }
+
+          const width = canvas.width;
+          const height = canvas.height;
+          const tier = Math.max(0, Math.min(7, Number(milestone.tier) || 0));
+          const reveal = Math.min(1, elapsed / 760);
+          const pulse = Math.floor(elapsed / 120) % 2;
+          const shimmer = Math.floor(elapsed / 80);
+          const palettes = [
+            ["#09070d", "#251018", "#5a2b2c", "#b76c3d", "#ffd77a", "#54d9b0", "#a934ff"],
+            ["#071012", "#102c2a", "#176b58", "#3cc994", "#ffe18a", "#ad51ff", "#ff4f71"],
+            ["#10070b", "#35101a", "#7a1729", "#df493e", "#ffd77a", "#7ce8ff", "#ff9ec6"],
+            ["#070a16", "#111d3a", "#273f77", "#a87cff", "#fff0b3", "#5ee7ff", "#ff4f71"],
+            ["#090816", "#1c1640", "#4f2c7e", "#c778ff", "#ffe6a3", "#6fffe8", "#ff6d9a"],
+            ["#080b13", "#1d2b31", "#3c5b5f", "#78d5bd", "#ffd77a", "#7ad7ff", "#ff5b45"],
+            ["#090712", "#21133d", "#493880", "#7f8cff", "#fff1b8", "#90f7ff", "#ff4f9a"],
+            ["#06050a", "#251331", "#684080", "#e0a0ff", "#fff4c1", "#85fff2", "#ff4f71"]
+          ];
+          const palette = palettes[tier] ?? palettes[0];
+          const px = (x, y, w, h, color) => {
+            context.fillStyle = color;
+            context.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h));
+          };
+          const mirror = (x, y, w, h, color) => {
+            px(x, y, w, h, color);
+            px(width - x - w, y, w, h, color);
+          };
+          const visibleRows = Math.floor(height * reveal);
+          const center = width / 2;
+
+          context.imageSmoothingEnabled = false;
+          px(0, 0, width, height, palette[0]);
+
+          for (let y = 0; y < height; y += 4) {
+            px(0, y, width, 2, y % 8 === 0 ? "#120a12" : "#050408");
+          }
+          for (let i = 0; i < 42 + tier * 5; i += 1) {
+            const x = (i * 23 + shimmer * (i % 3 + 1)) % width;
+            const y = (i * 17 + tier * 11) % 58;
+            px(x, y, 1 + (i % 2), 1, i % 5 === 0 ? palette[4] : "#6e5a8c");
+          }
+
+          const groundHeight = 18 + Math.min(8, tier);
+          px(0, height - groundHeight, width, groundHeight, "#0b0708");
+          for (let x = 0; x < width; x += 8) {
+            px(x, height - groundHeight + ((x / 8) % 2) * 2, 7, 2, "#2a1a1b");
+            px(x, height - 12, 7, 2, "#3b2420");
+          }
+
+          context.save();
+          context.beginPath();
+          context.rect(0, height - visibleRows, width, visibleRows);
+          context.clip();
+
+          const baseLevels = 3 + Math.min(5, tier);
+          for (let level = 0; level < baseLevels; level += 1) {
+            const y = 97 - level * 4;
+            const levelWidth = Math.min(154, 58 + tier * 7 + level * 16);
+            const x = center - levelWidth / 2;
+            px(x, y, levelWidth, 3, level % 2 ? palette[5] : palette[4]);
+            px(x + 4, y + 3, Math.max(8, levelWidth - 8), 2, level % 2 ? palette[2] : palette[3]);
+          }
+
+          const coreWidth = 26 + tier * 5;
+          const coreHeight = 24 + tier * 5;
+          const coreX = center - coreWidth / 2;
+          const coreY = 88 - coreHeight;
+          px(coreX, coreY, coreWidth, coreHeight, palette[2]);
+          px(coreX + 4, coreY + 3, Math.max(4, coreWidth - 8), 4, palette[3]);
+          px(coreX + coreWidth - 6, coreY + 6, 2, Math.max(4, coreHeight - 10), "#12080b");
+
+          const entranceWidth = 12 + tier * 2;
+          const entranceHeight = 12 + tier;
+          const entranceX = center - entranceWidth / 2;
+          const entranceY = 88 - entranceHeight;
+          px(entranceX - 3, entranceY - 3, entranceWidth + 6, 4, palette[4]);
+          px(entranceX, entranceY, entranceWidth, entranceHeight, palette[0]);
+          px(entranceX + 3, entranceY + 4, Math.max(4, entranceWidth - 6), entranceHeight - 4, pulse ? palette[6] : palette[5]);
+
+          const roofRows = 2 + Math.min(4, Math.floor(tier / 2) + 1);
+          for (let row = 0; row < roofRows; row += 1) {
+            const y = coreY - 5 - row * 7;
+            const roofWidth = Math.max(16, coreWidth + 18 - row * 5);
+            px(center - roofWidth / 2, y, roofWidth, 4, row % 2 ? palette[3] : palette[4]);
+            px(center - (roofWidth - 8) / 2, y + 4, Math.max(8, roofWidth - 8), 3, palette[2]);
+          }
+
+          const spireHeight = 10 + tier * 4;
+          const spireY = Math.max(6, coreY - 10 - roofRows * 7 - spireHeight);
+          px(center - 2, spireY, 4, spireHeight, palette[4]);
+          px(center - 5, spireY + spireHeight, 10, 4, palette[3]);
+          px(center - 3, Math.max(2, spireY - 7), 6, 7, pulse ? palette[6] : palette[5]);
+
+          const columnSpecs = [
+            { offset: -50, min: 0 }, { offset: 50, min: 0 },
+            { offset: -36, min: 1 }, { offset: 36, min: 1 },
+            { offset: -64, min: 4 }, { offset: 64, min: 4 },
+            { offset: -23, min: 6 }, { offset: 23, min: 6 }
+          ];
+          columnSpecs.forEach((spec) => {
+            if (tier < spec.min) {
+              return;
+            }
+
+            const x = center + spec.offset;
+            const innerColumn = Math.abs(spec.offset) < 30;
+            const columnHeight = 31 + tier * 3 - (innerColumn ? 6 : 0);
+            const columnY = 89 - columnHeight;
+            px(x - 3, columnY, 7, columnHeight, palette[2]);
+            px(x - 5, columnY - 4, 11, 4, palette[4]);
+            px(x - 5, 89, 11, 4, palette[3]);
+            for (let y = columnY + 5; y < 86; y += 8) {
+              px(x - 2, y, 2, 4, palette[3]);
+              px(x + 2, y + 2, 1, 3, "#1a0b0d");
+            }
+          });
+
+          if (tier >= 3) {
+            [-42, 42].forEach((offset) => {
+              const hallWidth = 22 + Math.min(12, tier * 2);
+              const hallX = center + offset - hallWidth / 2;
+              const hallY = 72 - tier * 2;
+              px(hallX, hallY, hallWidth, 17 + tier, palette[2]);
+              px(hallX - 4, hallY - 5, hallWidth + 8, 5, palette[4]);
+              px(hallX + 5, hallY + 6, hallWidth - 10, 10, palette[0]);
+            });
+          }
+
+          if (tier >= 5) {
+            mirror(8, 53, 12, 36, palette[2]);
+            mirror(5, 49, 18, 5, palette[4]);
+            mirror(3, 89, 24, 4, palette[3]);
+            mirror(14, 60, 3, 18, pulse ? palette[6] : palette[5]);
+          }
+
+          if (tier >= 7) {
+            for (let ring = 0; ring < 5; ring += 1) {
+              const ringWidth = 104 + ring * 10;
+              px(center - ringWidth / 2, 19 + ring * 5, ringWidth, 1, ring % 2 ? palette[5] : palette[4]);
+            }
+            px(2, 98, width - 4, 3, palette[4]);
+          }
+
+          for (let i = 0; i < 12 + tier * 8; i += 1) {
+            const side = i % 2 === 0 ? -1 : 1;
+            const x = center + side * (16 + ((i * 7 + shimmer) % (42 + tier * 3)));
+            const y = 22 + ((i * 11 + shimmer * 2) % 62);
+            const size = 2 + (i % 3 === 0 ? 1 : 0);
+            px(x, y, size, size, i % 4 === 0 ? palette[6] : palette[5]);
+          }
+
+          mirror(10, 76 - Math.min(14, tier * 2), 10 + Math.min(8, tier), 16 + tier, palette[2]);
+          mirror(12, 70 - Math.min(14, tier * 2), 6 + Math.min(6, tier), 6, palette[4]);
+          mirror(6, 92, 22 + Math.min(12, tier * 2), 4, palette[3]);
+
+          context.restore();
+
+          if (elapsed < 260) {
+            for (let y = 0; y < height; y += 4) {
+              px(0, y, width, 1, "rgba(255, 255, 255, 0.16)");
+            }
+          }
+          if (elapsed > PIXEL_TEMPLE_FADE_START) {
+            const fadeWindow = Math.max(1, PIXEL_TEMPLE_HOLD - PIXEL_TEMPLE_FADE_START);
+            const fade = Math.min(0.72, (elapsed - PIXEL_TEMPLE_FADE_START) / fadeWindow);
+            px(0, 0, width, height, `rgba(7, 6, 5, ${fade})`);
+          }
+        }
+
+        function judgeScoreAndPlay() {
+          const score = Math.max(0, Number(scoreInput.value || 0));
+          const milestone = getMilestoneForScore(score);
+          setScoreJudge(score, milestone);
+
+          if (milestone) {
+            showTemple(milestone);
+          } else {
+            hideTemple();
+            setStatus("No temple cut-in");
+          }
+        }
+
+        function renderTempleTierGrid() {
+          templeTierGrid.innerHTML = "";
+          milestones.forEach((milestone) => {
+            const card = document.createElement("button");
+            card.className = "temple-tier-card";
+            card.type = "button";
+            card.setAttribute("data-tier", String(milestone.tier));
+            card.innerHTML = `
+              <canvas width="160" height="112" aria-hidden="true"></canvas>
+              <span>${formatNumber(milestone.score)}</span>
+              <strong>${milestone.title}</strong>
+              <em>${milestone.subtitle}</em>
+            `;
+
+            const canvas = card.querySelector("canvas");
+            drawPixelTempleScene(milestone, 900, canvas);
+            card.addEventListener("click", () => {
+              scoreInput.value = String(milestone.score);
+              setScoreJudge(milestone.score, milestone);
+              showTemple(milestone);
+            });
+            templeTierGrid.appendChild(card);
+          });
+        }
+
+        qs("#timeUpButton").addEventListener("click", () => showTimeUp(() => setStatus("Ready")));
+        qs("#templeButton").addEventListener("click", () => showTemple(getMilestoneForScore(Number(scoreInput.value || 0)) ?? milestones[3]));
+        qs("#sequenceButton").addEventListener("click", playSequence);
+        qs("#scoreJudgeButton").addEventListener("click", judgeScoreAndPlay);
+        scoreInput.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") {
+            judgeScoreAndPlay();
+          }
+        });
+
+        renderTempleTierGrid();
+        setScoreJudge(Number(scoreInput.value), getMilestoneForScore(Number(scoreInput.value)));
+        drawPixelTempleScene(milestones[3], 900);
+
+        const params = new URLSearchParams(window.location.search);
+        const mode = params.get("play");
+        const scoreParam = params.get("score");
+        if (scoreParam !== null) {
+          scoreInput.value = String(Math.max(0, Number(scoreParam || 0)));
+          setScoreJudge(Number(scoreInput.value), getMilestoneForScore(Number(scoreInput.value)));
+        }
+
+        window.setTimeout(() => {
+          if (mode === "timeup") {
+            showTimeUp(() => setStatus("Ready"));
+          } else if (mode === "temple") {
+            showTemple(getMilestoneForScore(Number(scoreInput.value || 0)) ?? milestones[3]);
+          } else if (mode === "sequence") {
+            playSequence();
+          } else if (scoreParam !== null) {
+            judgeScoreAndPlay();
+          }
+        }, 240);
+      })();
+    </script>
+  </body>
+</html>

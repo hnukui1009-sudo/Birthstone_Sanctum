@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#17080d"/>
+      <stop offset=".48" stop-color="#251011"/>
+      <stop offset="1" stop-color="#050404"/>
+    </linearGradient>
+    <radialGradient id="moon" cx="50%" cy="43%" r="48%">
+      <stop offset="0" stop-color="#ffe8a4"/>
+      <stop offset=".32" stop-color="#d8a755"/>
+      <stop offset="1" stop-color="#5a231e" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="lacquer" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7b1b22"/>
+      <stop offset="1" stop-color="#21080a"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <circle cx="805" cy="310" r="245" fill="url(#moon)" opacity=".72"/>
+  <path d="M0 645 C260 575 350 635 560 586 C760 538 875 628 1076 570 C1264 516 1390 568 1600 505 L1600 900 L0 900 Z" fill="#080607" opacity=".78"/>
+  <g opacity=".35" stroke="#d9a94f" stroke-width="2" fill="none">
+    <path d="M160 210h260M1180 220h270M250 252h155M1120 275h190"/>
+    <path d="M208 209c34 18 68 18 102 0c34 18 68 18 102 0M1235 219c34 18 68 18 102 0c34 18 68 18 102 0"/>
+  </g>
+  <g transform="translate(210 185)">
+    <path d="M0 405h1180v72H0z" fill="#120809"/>
+    <path d="M88 200h1004l-74 66H162z" fill="#5f161b"/>
+    <path d="M142 154h900l-60 56H202z" fill="#2a0c0e"/>
+    <path d="M180 265h820v36H180z" fill="#bd8740" opacity=".78"/>
+    <path d="M220 300h72v177h-72zM890 300h72v177h-72z" fill="url(#lacquer)"/>
+    <path d="M326 306h528v170H326z" fill="#100708" opacity=".82"/>
+    <circle cx="590" cy="390" r="116" fill="none" stroke="#c99546" stroke-width="18" opacity=".86"/>
+    <circle cx="590" cy="390" r="82" fill="#070506" opacity=".7"/>
+    <path d="M456 477h268" stroke="#c99546" stroke-width="12" opacity=".68"/>
+  </g>
+  <g fill="#d9a94f" opacity=".7">
+    <path d="M276 446h36v54h-36zM1288 390h36v56h-36z"/>
+    <circle cx="294" cy="434" r="22"/>
+    <circle cx="1306" cy="378" r="22"/>
+  </g>
+  <rect width="1600" height="900" fill="none" stroke="#d9a94f" stroke-opacity=".08" stroke-width="20"/>
+</svg>

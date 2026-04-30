@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Birthstone Columns BGM preview links.">
+    <title>Birthstone Columns BGM Preview</title>
+    <link rel="preload" href="assets/bg-moon-gate.svg" as="image">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <div class="scene-backdrop is-visible" style="--scene-art: url('assets/bg-moon-gate.svg')" aria-hidden="true"></div>
+
+      <main class="bgm-preview" aria-labelledby="previewTitle">
+        <section class="bgm-preview-panel">
+          <p class="eyebrow">BGM Preview</p>
+          <h1 id="previewTitle">Birthstone Columns BGM</h1>
+          <p class="mood-line">リンクごとに曲を選択して、Playで確認できます。</p>
+
+          <nav class="bgm-link-list" aria-label="BGM preview links">
+            <a class="bgm-track-link" href="bgm-preview.html?track=title" data-track-link="title">タイトルBGM</a>
+            <a class="bgm-track-link" href="bgm-preview.html?track=game" data-track-link="game">ゲーム中BGM</a>
+            <a class="bgm-track-link" href="bgm-preview.html?track=over" data-track-link="over">終了BGM</a>
+          </nav>
+
+          <div class="preview-player">
+            <div>
+              <span class="preview-label">Selected</span>
+              <strong id="trackName">タイトルBGM</strong>
+            </div>
+            <div class="preview-actions">
+              <button class="primary-button" id="playButton" type="button">Play</button>
+              <button class="secondary-button" id="stopButton" type="button">Stop</button>
+            </div>
+          </div>
+
+          <p class="preview-status" id="previewStatus" aria-live="polite">Stopped</p>
+          <a class="back-link" href="index.html">ゲームへ戻る</a>
+        </section>
+      </main>
+    </div>
+
+    <script src="bgm-preview.js"></script>
+  </body>
+</html>

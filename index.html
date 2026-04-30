@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Birthstone Sanctum, a browser match-3 time attack puzzle game.">
+    <title>Birthstone Sanctum</title>
+    <link rel="preload" href="assets/oriental-pattern.svg" as="image">
+    <link rel="preload" href="assets/bg-moon-gate.svg" as="image">
+    <link rel="preload" href="assets/bg-jade-courtyard.svg" as="image">
+    <link rel="preload" href="assets/bg-lantern-hall.svg" as="image">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <div class="scene-backdrop" id="sceneBackdrop" aria-hidden="true"></div>
+      <div class="resonance-layer" id="resonanceLayer" aria-hidden="true"></div>
+      <div class="time-up-overlay" id="timeUpOverlay" aria-live="assertive" aria-hidden="true">
+        <span>Time UP!</span>
+      </div>
+      <div class="pixel-temple-overlay" id="pixelTempleOverlay" aria-live="polite" aria-hidden="true">
+        <div class="pixel-temple-frame">
+          <canvas id="pixelTempleCanvas" width="160" height="112" aria-hidden="true"></canvas>
+          <div class="pixel-temple-caption">
+            <span id="pixelTempleTitle">Gate Opens</span>
+            <strong id="pixelTempleScore">20,000</strong>
+          </div>
+        </div>
+      </div>
+      <section class="screen screen-start is-active" id="startScreen" aria-labelledby="gameTitle">
+        <div class="start-stage">
+          <div class="sigil" aria-hidden="true">
+            <span>60</span>
+          </div>
+
+          <div class="title-block">
+            <p class="eyebrow">Time Attack</p>
+            <h1 id="gameTitle">Birthstone Sanctum</h1>
+            <p class="mood-line">Seven stones, forty-nine cells, sixty seconds.</p>
+            <div class="start-actions">
+              <button class="primary-button" id="startButton" type="button">Start Game</button>
+            </div>
+          </div>
+
+          <div class="start-side">
+            <div class="preview-grid" aria-hidden="true">
+              <span style="--stone:#b4092f"></span>
+              <span style="--stone:#9b32ff"></span>
+              <span style="--stone:#00d8ff"></span>
+              <span style="--stone:#00e676"></span>
+              <span style="--stone:#ff174f"></span>
+              <span style="--stone:#235cff"></span>
+              <span style="--stone:#ffcf24"></span>
+            </div>
+
+            <section class="ritual-panel start-ritual-panel" aria-labelledby="ritualPanelTitle">
+              <p class="eyebrow" id="ritualPanelTitle">Next Ritual</p>
+              <div class="temple-progress">
+                <span id="templeRankText">Sealed Gate</span>
+                <strong id="templeProgressText">0 / 120</strong>
+                <div class="temple-track" aria-hidden="true"><i id="templeFill"></i></div>
+              </div>
+              <ul class="mission-list" id="startMissionList"></ul>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen screen-game" id="gameScreen" aria-label="Game">
+        <header class="game-hud">
+          <div class="hud-item">
+            <span>TIME</span>
+            <strong id="timerText">60.0</strong>
+          </div>
+          <div class="hud-item">
+            <span>SCORE</span>
+            <strong id="scoreText">0</strong>
+          </div>
+          <div class="hud-item">
+            <span>COMBO</span>
+            <strong id="comboText">1x</strong>
+          </div>
+          <div class="hud-item special-hud">
+            <span>JEWELS</span>
+            <strong id="specialText">0/50</strong>
+          </div>
+          <div class="hud-item resonance-hud">
+            <span>LEVEL</span>
+            <strong id="resonanceText">LV 1</strong>
+            <div class="resonance-track" aria-hidden="true">
+              <i id="resonanceFill"></i>
+            </div>
+          </div>
+          <div class="audio-mix" aria-label="Audio mix">
+            <button class="sound-button" id="soundButton" type="button" aria-pressed="true">Sound</button>
+            <label class="audio-slider">
+              <span>BGM</span>
+              <input id="bgmVolume" type="range" min="0" max="100" value="72" aria-label="BGM volume">
+            </label>
+            <label class="audio-slider">
+              <span>SE</span>
+              <input id="sfxVolume" type="range" min="0" max="100" value="88" aria-label="SE volume">
+            </label>
+          </div>
+          <button class="resonance-button" id="resonanceButton" type="button" disabled>Resonate</button>
+        </header>
+
+        <main class="game-layout">
+          <div class="board-shell" id="boardShell">
+            <div class="combo-ribbon" id="comboRibbon" aria-live="polite"></div>
+            <div class="board" id="board" role="grid" aria-label="Birthstone match board"></div>
+          </div>
+
+          <aside class="stone-panel" aria-label="Birthstone list">
+            <h2>Birthstones</h2>
+            <div class="stone-list" id="stoneList"></div>
+          </aside>
+        </main>
+      </section>
+
+      <section class="screen screen-over" id="gameOverScreen" aria-labelledby="gameOverTitle">
+        <div class="over-panel">
+          <p class="eyebrow">Time Over</p>
+          <h2 id="gameOverTitle">The Sanctum Falls Silent</h2>
+          <p class="result-title" id="resultTitleText">Gem Acolyte</p>
+          <div class="result-line">
+            <span>Score</span>
+            <strong id="finalScoreText">0</strong>
+          </div>
+          <div class="result-line">
+            <span>Best</span>
+            <strong id="bestScoreText">0</strong>
+          </div>
+          <div class="result-stats" id="resultStats"></div>
+          <div class="result-section">
+            <div class="section-heading">
+              <span>Ritual Missions</span>
+              <strong id="missionSummaryText">0 / 3</strong>
+            </div>
+            <ul class="mission-list mission-results" id="missionResults"></ul>
+          </div>
+          <div class="result-section temple-result">
+            <div class="section-heading">
+              <span>Sanctum Light</span>
+              <strong id="templeRewardText">+0</strong>
+            </div>
+            <div class="temple-progress">
+              <span id="resultTempleRankText">Sealed Gate</span>
+              <strong id="resultTempleProgressText">0 / 120</strong>
+              <div class="temple-track" aria-hidden="true"><i id="resultTempleFill"></i></div>
+            </div>
+          </div>
+          <div class="over-actions">
+            <button class="primary-button" id="restartButton" type="button">Play Again</button>
+            <button class="secondary-button" id="titleButton" type="button">タイトル画面へ戻る</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script src="main.js"></script>
+  </body>
+</html>
