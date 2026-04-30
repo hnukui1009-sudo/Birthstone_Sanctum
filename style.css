@@ -38,12 +38,13 @@ body {
   margin: 0;
   overflow-x: hidden;
   background:
+    url("assets/oriental-pattern.svg"),
     repeating-linear-gradient(45deg, rgba(155, 112, 67, 0.08) 0 8px, rgba(40, 25, 16, 0.08) 8px 16px),
     radial-gradient(circle at 50% 24%, rgba(217, 169, 79, 0.18), transparent 32%),
     linear-gradient(115deg, rgba(71, 21, 42, 0.45), transparent 34%),
     linear-gradient(245deg, rgba(16, 54, 79, 0.32), transparent 42%),
     linear-gradient(180deg, #030407 0%, #0d0a13 46%, #030407 100%);
-  background-size: 32px 32px, auto, auto, auto, auto;
+  background-size: 192px 192px, 32px 32px, auto, auto, auto, auto;
   color: var(--paper);
   font-family: var(--pixel-font);
   letter-spacing: 0;
@@ -117,7 +118,8 @@ button:focus-visible {
     linear-gradient(180deg, var(--stage-veil-a), var(--stage-veil-b)),
     var(--scene-art);
   background-position: center;
-  background-size: cover;
+  background-size: auto, auto, auto, cover;
+  image-rendering: pixelated;
   opacity: 0;
   transform: scale(1.02);
   transition: opacity 780ms var(--ease-out), filter 780ms var(--ease-out);
@@ -679,11 +681,17 @@ h2 {
   aspect-ratio: 1;
   clip-path: polygon(50% 0, 91% 23%, 82% 82%, 50% 100%, 18% 82%, 9% 23%);
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.86), transparent 23%),
-    linear-gradient(315deg, rgba(0, 0, 0, 0.5), transparent 48%),
-    repeating-linear-gradient(90deg, transparent 0 8px, rgba(255, 255, 255, 0.18) 8px 10px, transparent 10px 18px),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0 15%, transparent 15% 100%),
+    linear-gradient(315deg, rgba(0, 0, 0, 0) 0 55%, rgba(0, 0, 0, 0.58) 55% 100%),
+    linear-gradient(90deg, transparent 0 32%, rgba(255, 255, 255, 0.24) 32% 38%, transparent 38% 63%, rgba(0, 0, 0, 0.22) 63% 70%, transparent 70%),
+    linear-gradient(0deg, transparent 0 28%, rgba(255, 255, 255, 0.18) 28% 34%, transparent 34% 70%, rgba(0, 0, 0, 0.22) 70% 76%, transparent 76%),
     var(--stone);
-  box-shadow: inset 0 -10px 18px rgba(0, 0, 0, 0.34), 0 8px 18px rgba(0, 0, 0, 0.36);
+  box-shadow:
+    inset 5px 5px 0 rgba(255, 255, 255, 0.18),
+    inset -7px -7px 0 rgba(0, 0, 0, 0.38),
+    0 8px 0 rgba(0, 0, 0, 0.28),
+    0 12px 18px rgba(0, 0, 0, 0.36);
+  image-rendering: pixelated;
   animation: previewBreathe 2400ms ease-in-out infinite;
 }
 
@@ -711,9 +719,11 @@ h2 {
   border: 1px solid var(--line);
   border-radius: 4px;
   background:
+    url("assets/oriental-pattern.svg"),
     repeating-linear-gradient(45deg, rgba(255, 230, 151, 0.035) 0 4px, transparent 4px 9px),
     linear-gradient(180deg, rgba(255, 215, 128, 0.1), rgba(82, 50, 25, 0.12)),
     var(--panel);
+  background-size: 96px 96px, auto, auto, auto;
   box-shadow:
     0 14px 0 rgba(0, 0, 0, 0.16),
     0 18px 40px rgba(0, 0, 0, 0.38),
@@ -970,10 +980,12 @@ h2 {
   border: 3px solid var(--stone-frame-light);
   border-radius: 4px;
   background:
+    url("assets/oriental-pattern.svg"),
     repeating-linear-gradient(45deg, rgba(255, 231, 164, 0.08) 0 8px, rgba(0, 0, 0, 0.05) 8px 16px),
     linear-gradient(135deg, rgba(255, 216, 126, 0.13), transparent 34%),
     linear-gradient(315deg, rgba(61, 36, 17, 0.52), transparent 42%),
     var(--stone-frame);
+  background-size: 128px 128px, auto, auto, auto, auto;
   box-shadow:
     0 0 0 4px #100805,
     0 28px 80px rgba(0, 0, 0, 0.62),
@@ -983,6 +995,7 @@ h2 {
   backdrop-filter: blur(2px) saturate(1.04);
   padding: clamp(10px, 1.9vw, 18px);
   overflow: visible;
+  image-rendering: pixelated;
 }
 
 .board-shell::before,
@@ -1049,11 +1062,13 @@ h2 {
   border: 1px solid rgba(0, 0, 0, 0.72);
   border-radius: 2px;
   background:
-    linear-gradient(145deg, rgba(43, 29, 18, 0.32), rgba(1, 2, 6, 0.92) 46%, rgba(25, 16, 10, 0.72)),
+    linear-gradient(135deg, rgba(105, 73, 37, 0.3) 0 12%, transparent 12%),
+    linear-gradient(315deg, transparent 0 62%, rgba(0, 0, 0, 0.45) 62%),
+    repeating-linear-gradient(45deg, rgba(255, 226, 150, 0.045) 0 4px, transparent 4px 8px),
     #030407;
   box-shadow:
     inset 1px 1px 0 rgba(255, 219, 137, 0.08),
-    inset -2px -2px 0 rgba(0, 0, 0, 0.52),
+    inset -3px -3px 0 rgba(0, 0, 0, 0.6),
     0 5px 10px rgba(0, 0, 0, 0.22);
   transition:
     left var(--move-ms) var(--ease-snap),
@@ -1165,21 +1180,22 @@ h2 {
   overflow: hidden;
   clip-path: polygon(18% 0, 82% 0, 100% 24%, 100% 76%, 82% 100%, 18% 100%, 0 76%, 0 24%);
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0 10%, transparent 11% 100%),
-    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.18) 0 3px, transparent 3px 10px),
-    repeating-linear-gradient(0deg, transparent 0 9px, rgba(0, 0, 0, 0.18) 9px 12px),
-    conic-gradient(from 45deg at 50% 50%, var(--stone-light), var(--stone) 15%, var(--stone-dark) 31%, var(--stone) 48%, var(--stone-light) 62%, var(--stone-dark) 78%, var(--stone)),
-    radial-gradient(circle at 54% 42%, var(--stone-light), var(--stone) 45%, var(--stone-dark) 100%);
+    linear-gradient(135deg, rgba(255, 255, 255, 0.94) 0 11%, transparent 11% 100%),
+    linear-gradient(315deg, transparent 0 58%, rgba(0, 0, 0, 0.48) 58% 100%),
+    linear-gradient(90deg, transparent 0 18%, rgba(255, 255, 255, 0.2) 18% 26%, transparent 26% 48%, rgba(0, 0, 0, 0.2) 48% 56%, transparent 56% 78%, rgba(255, 255, 255, 0.16) 78% 84%, transparent 84%),
+    linear-gradient(0deg, rgba(0, 0, 0, 0.3) 0 16%, transparent 16% 35%, rgba(255, 255, 255, 0.18) 35% 43%, transparent 43% 70%, rgba(255, 255, 255, 0.2) 70% 78%, transparent 78%),
+    linear-gradient(135deg, var(--stone-light) 0 18%, var(--stone) 18% 42%, var(--stone-dark) 42% 58%, var(--stone) 58% 76%, var(--stone-light) 76% 100%);
   box-shadow:
-    inset 0 -8px 14px rgba(0, 0, 0, 0.42),
-    inset 0 6px 10px rgba(255, 255, 255, 0.3),
-    inset 6px 0 10px rgba(255, 255, 255, 0.08),
-    inset -7px 0 10px rgba(0, 0, 0, 0.28),
+    inset 5px 5px 0 rgba(255, 255, 255, 0.28),
+    inset -7px -7px 0 rgba(0, 0, 0, 0.42),
+    inset 8px 0 0 rgba(255, 255, 255, 0.08),
+    inset -9px 0 0 rgba(0, 0, 0, 0.24),
     0 4px 0 rgba(0, 0, 0, 0.38),
     0 7px 13px rgba(0, 0, 0, 0.44),
     0 0 14px color-mix(in srgb, var(--stone) 55%, transparent);
   transition: transform 180ms var(--ease-snap), box-shadow 180ms var(--ease-out), filter 180ms var(--ease-out);
   will-change: transform, opacity;
+  image-rendering: pixelated;
 }
 
 .tile[data-stone="garnet"] .tile-core {
@@ -1218,20 +1234,19 @@ h2 {
 }
 
 .tile-core::before {
-  inset: 8% 13% 52% 15%;
-  clip-path: polygon(12% 35%, 50% 0, 88% 35%, 68% 100%, 32% 100%);
+  inset: 10% 14% 54% 14%;
+  clip-path: polygon(0 40%, 50% 0, 100% 40%, 72% 100%, 28% 100%);
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.18) 46%, transparent 68%);
-  filter: blur(0.1px);
+    linear-gradient(135deg, rgba(255, 255, 255, 0.88) 0 36%, rgba(255, 255, 255, 0.24) 36% 58%, transparent 58%);
 }
 
 .tile-core::after {
   inset: 0;
   clip-path: inherit;
   background:
-    linear-gradient(90deg, transparent 0 22%, rgba(255, 255, 255, 0.24) 23%, transparent 25% 49%, rgba(0, 0, 0, 0.18) 50%, transparent 52% 75%, rgba(255, 255, 255, 0.18) 76%, transparent 78%),
-    linear-gradient(0deg, transparent 0 28%, rgba(255, 255, 255, 0.22) 29%, transparent 31% 68%, rgba(0, 0, 0, 0.25) 69%, transparent 71%);
-  border: 1px solid rgba(255, 255, 255, 0.26);
+    linear-gradient(90deg, transparent 0 24%, rgba(255, 255, 255, 0.28) 24% 29%, transparent 29% 49%, rgba(0, 0, 0, 0.26) 49% 54%, transparent 54% 75%, rgba(255, 255, 255, 0.18) 75% 80%, transparent 80%),
+    linear-gradient(0deg, transparent 0 27%, rgba(255, 255, 255, 0.2) 27% 33%, transparent 33% 67%, rgba(0, 0, 0, 0.28) 67% 73%, transparent 73%);
+  border: 2px solid rgba(255, 255, 255, 0.22);
   opacity: 0.9;
 }
 
@@ -1539,10 +1554,14 @@ h2 {
   aspect-ratio: 1;
   clip-path: polygon(50% 0, 92% 22%, 79% 84%, 50% 100%, 21% 84%, 8% 22%);
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.86), transparent 32%),
-    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.18) 0 2px, transparent 2px 6px),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.86) 0 28%, transparent 28%),
+    linear-gradient(315deg, transparent 0 58%, rgba(0, 0, 0, 0.42) 58%),
+    linear-gradient(90deg, transparent 0 32%, rgba(255, 255, 255, 0.22) 32% 42%, transparent 42% 64%, rgba(0, 0, 0, 0.2) 64% 74%, transparent 74%),
     var(--stone);
-  box-shadow: 0 0 12px color-mix(in srgb, var(--stone) 68%, transparent);
+  box-shadow:
+    inset 2px 2px 0 rgba(255, 255, 255, 0.16),
+    inset -3px -3px 0 rgba(0, 0, 0, 0.34),
+    0 0 12px color-mix(in srgb, var(--stone) 68%, transparent);
 }
 
 .stone-chip.is-hot {

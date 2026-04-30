@@ -60,7 +60,7 @@ Then visit `http://localhost:8000`.
 - Matches trigger gem bursts, light columns, expanding rings, sigils, shard particles, board pulse, score popups, and combo ribbons. Chain reactions increase the number and scale of burst objects.
 - Chain reactions emit lightweight full-screen resonance particles. The particle count and glow scale with the chain count and remain capped for performance.
 - Quick consecutive clears build an ECHO streak, adding subtle board glow, particles, higher match tones, and persistent BGM layers without changing the core rules.
-- The visual theme is a copyright-safe reinterpretation of a heavy 16-bit jewel puzzle mood: black/deep navy board, stone temple frame, high-saturation pixel-faceted gems, and sandstone tablet UI.
+- The visual theme is a copyright-safe reinterpretation of a heavy 16-bit jewel puzzle mood: black/deep navy board, stone temple frame, high-saturation pixel-faceted gems, sandstone tablet UI, and all SVG scene resources redrawn as shaded pixel-temple art.
 - Gameplay music reacts to combo intensity by slightly tightening the pulse while keeping the core BGM intact. Each run generates a different original music profile, so tempo feel, FM-like bell shimmer, marimba-style taps, pad drones, wood percussion, and countermelodies vary. Once unlocked, those layers keep playing in concert with the base theme for the rest of the run.
 - The background moves through three stage themes, calm moon gate, jade courtyard, and lantern hall, as the 60-second timer drops from 60 to 40, 40 to 20, and 20 to 0 seconds.
 - A ritual-light overlay grows with the timer progress while preserving board readability.
